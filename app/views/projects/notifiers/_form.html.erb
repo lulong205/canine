@@ -70,6 +70,16 @@
           description: "Send notifications to all project members",
           partial: "projects/notifiers/email_instructions",
           locals: { notifier: notifier }
+        },
+        {
+          name: "notifier[provider_type]",
+          value: "webhook",
+          href: nil,
+          icon: "lucide:webhook",
+          label: "Webhook",
+          description: "POST JSON to any HTTPS endpoint",
+          partial: "projects/notifiers/webhook_instructions",
+          locals: { notifier: notifier }
         }
       ] %>
   </div>
