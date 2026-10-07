@@ -9,6 +9,9 @@ permissions:
   contents: read
   packages: write
 
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
@@ -39,7 +42,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/caninehq/canine
+          images: ${{ env.IMAGE }}
 
       - name: Build and push by digest
         id: build
@@ -48,7 +51,7 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=ghcr.io/caninehq/canine,push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.platform }}
           cache-to: type=gha,scope=${{ matrix.platform }},mode=max
 
@@ -91,8 +94,9 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create \
-            -t ghcr.io/caninehq/canine:latest \
-            $(printf 'ghcr.io/caninehq/canine@sha256:%s ' *)
+            -t "$IMAGE:latest" \
+            -t "$IMAGE:sha-${GITHUB_SHA::7}" \
+            $(printf "$IMAGE@sha256:%s " *)
 
       - name: Inspect image
-        run: docker buildx imagetools inspect ghcr.io/caninehq/canine:latest
+        run: docker buildx imagetools inspect "$IMAGE:sha-${GITHUB_SHA::7}"
