@@ -23,7 +23,7 @@
 class Notifier < ApplicationRecord
   belongs_to :project
 
-  enum :provider_type, { slack: 0, discord: 1, microsoft_teams: 2, google_chat: 3, email: 4 }
+  enum :provider_type, { slack: 0, discord: 1, microsoft_teams: 2, google_chat: 3, email: 4, webhook: 5 }
 
   validates :name, presence: true
   validates :webhook_url, presence: true, unless: :email?

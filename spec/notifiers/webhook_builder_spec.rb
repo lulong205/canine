@@ -163,4 +163,44 @@ RSpec.describe WebhookBuilder do
       expect(widgets.none? { |w| w[:buttonList] }).to be true
     end
   end
+
+  describe "webhook payload" do
+    subject(:payload) { basic_builder.event("deployment").build(:webhook) }
+
+    it "has the v1 keys in order" do
+      expect(payload.keys).to eq(%i[version event status status_text emoji title message url url_label fields timestamp])
+      expect(payload).to include(version: 1, event: "deployment", status: "success", status_text: "Success",
+                                 emoji: "✅", title: "My Project", message: "Deployment completed",
+                                 url: "https://example.com/deploy/1", url_label: "View Details")
+    end
+
+    it "maps every status state to a string" do
+      %i[success in_progress failed].each do |state|
+        result = builder.status(emoji: "x", text: "x", state: state).build(:webhook)
+        expect(result[:status]).to eq(state.to_s)
+      end
+    end
+
+    it "includes fields with and without links, values as strings" do
+      result = builder.widget(label: "SHA", value: "abc1234", link: "https://github.com/o/r/commit/abc1234")
+                      .widget(label: "Replicas", value: 3).build(:webhook)
+      expect(result[:fields]).to eq([
+        { label: "SHA", value: "abc1234", link: "https://github.com/o/r/commit/abc1234" },
+        { label: "Replicas", value: "3", link: nil }
+      ])
+    end
+
+    it "uses null url and url_label when no url was set" do
+      expect(builder.build(:webhook)).to include(url: nil, url_label: nil)
+    end
+
+    it "has an ISO 8601 timestamp" do
+      expect(Time.iso8601(payload[:timestamp])).to be_within(5.seconds).of(Time.current)
+    end
+
+    it "does not add event to other providers" do
+      expect(basic_builder.event("deployment").build(:slack)).not_to have_key(:event)
+      expect(basic_builder.event("deployment").build(:discord)).not_to have_key(:event)
+    end
+  end
 end

@@ -19,6 +19,7 @@
     </label>
     <%= render "shared/partials/radio_selector",
       selected: notifier.provider_type || "slack",
+      disable_hidden: true,
       options: [
         {
           name: "notifier[provider_type]",
@@ -68,6 +69,16 @@
           label: "Email",
           description: "Send notifications to all project members",
           partial: "projects/notifiers/email_instructions",
+          locals: { notifier: notifier }
+        },
+        {
+          name: "notifier[provider_type]",
+          value: "webhook",
+          href: nil,
+          icon: "lucide:webhook",
+          label: "Webhook",
+          description: "POST JSON to any HTTPS endpoint",
+          partial: "projects/notifiers/webhook_instructions",
           locals: { notifier: notifier }
         }
       ] %>
