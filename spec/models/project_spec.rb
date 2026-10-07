@@ -226,4 +226,15 @@ RSpec.describe Project, type: :model do
       expect(docker_project.container_image_reference).to eq('docker.io/owner/repo:latest-cpu')
     end
   end
+
+  describe "#to_canine_config" do
+    let(:project) { create(:project) }
+
+    it "round-trips need_ssl per domain" do
+      service = create(:service, project: project, allow_public_networking: true)
+      create(:domain, service: service, domain_name: "proxied.example.com", need_ssl: false)
+      restored = CanineConfig::Definition.new(project.reload.to_canine_config).services.first
+      expect(restored.domains.map { |d| [ d.domain_name, d.need_ssl ] }).to eq([ [ "proxied.example.com", false ] ])
+    end
+  end
 end

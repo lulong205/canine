@@ -19,8 +19,12 @@ class K8::Stateless::Ingress < K8::Base
     end
   end
 
+  def ssl_domains
+    @service.domains.select(&:need_ssl?)
+  end
+
   def certificate_status
-    return nil unless @service.domains.any?
+    return nil unless ssl_domains.any?
     return nil unless @service.allow_public_networking?
 
     kubectl.call(%w[get certificate] + [ certificate_name, "-n", @project.namespace, "-o", 'jsonpath={.status.conditions[?(@.type=="Ready")].status}' ]) == "True"

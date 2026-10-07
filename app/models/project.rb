@@ -351,7 +351,7 @@ class Project < ApplicationRecord
     }.compact
 
     if service.domains.any?
-      hash["domains"] = service.domains.map { |d| { "domain_name" => d.domain_name } }
+      hash["domains"] = service.domains.map { |d| { "domain_name" => d.domain_name, "need_ssl" => d.need_ssl } }
     end
 
     if service.resource_constraint.present?

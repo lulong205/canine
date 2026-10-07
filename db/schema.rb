@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_19_152959) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_07_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -258,6 +258,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_19_152959) do
     t.string "status_reason"
     t.boolean "auto_managed", default: false
     t.bigint "service_id", null: false
+    t.boolean "need_ssl", default: true, null: false
     t.index ["service_id"], name: "index_domains_on_service_id"
   end
 

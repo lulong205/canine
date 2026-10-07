@@ -5,6 +5,7 @@
 #  id            :bigint           not null, primary key
 #  auto_managed  :boolean          default(FALSE)
 #  domain_name   :string           not null
+#  need_ssl      :boolean          default(TRUE), not null
 #  status        :integer          default("checking_dns")
 #  status_reason :string
 #  created_at    :datetime         not null
@@ -48,5 +49,9 @@ RSpec.describe Domain, type: :model do
       domain.valid?
       expect(domain.errors[:domain_name]).to be_empty
     end
+  end
+
+  it "needs SSL by default" do
+    expect(Domain.new.need_ssl).to be(true)
   end
 end
