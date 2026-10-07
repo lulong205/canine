@@ -93,19 +93,8 @@ spec:
         ports:
         - containerPort: <%= service.container_port %>
         <% end %>
-        <% if service.healthcheck_url.present? %>
-        livenessProbe:
-          httpGet:
-            path: <%= service.healthcheck_url %>
-            port: <%= service.container_port %>
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: <%= service.healthcheck_url %>
-            port: <%= service.container_port %>
-          initialDelaySeconds: 30
-          periodSeconds: 10
+        <% if probes.any? %>
+<%= probes.to_yaml_raw.lines.map { |line| "        #{line}" }.join %>
         <% end %>
         <% if @project.volumes.present? %>
         volumeMounts:
