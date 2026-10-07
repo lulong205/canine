@@ -15,12 +15,12 @@ spec:
   tls:
   - hosts:
     <% service.domains.each do |domain| %>
-    - <%= domain.domain_name %>
+    - <%= domain.domain_name.to_json %>
     <% end %>
     secretName: <%= certificate_name %>
   rules:
   <% service.domains.each do |domain| %>
-  - host: <%= domain.domain_name %>
+  - host: <%= domain.domain_name.to_json %>
     http:
       paths:
       - pathType: Prefix

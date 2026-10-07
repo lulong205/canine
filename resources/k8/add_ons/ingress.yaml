@@ -12,12 +12,12 @@ spec:
   tls:
   - hosts:
     <% domains.each do |domain| %>
-    - <%= domain %>
+    - <%= domain.to_json %>
     <% end %>
     secretName: <%= endpoint.metadata.name %>-tls
   rules:
   <% domains.each do |domain| %>
-  - host: <%= domain %>
+  - host: <%= domain.to_json %>
     http:
       paths:
       - pathType: Prefix
