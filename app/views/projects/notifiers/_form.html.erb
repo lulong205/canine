@@ -19,6 +19,7 @@
     </label>
     <%= render "shared/partials/radio_selector",
       selected: notifier.provider_type || "slack",
+      disable_hidden: true,
       options: [
         {
           name: "notifier[provider_type]",
