@@ -125,4 +125,18 @@ RSpec.describe Deployment, type: :model do
       expect(deployment.manifests['deployment/test-app']).to eq(deployment_yaml)
     end
   end
+
+  describe "#kill!" do
+    let(:user) { create(:user) }
+    let(:deployment) { create(:deployment, status: :in_progress) }
+
+    before { allow(DeploymentNotifier).to receive(:with).and_call_original }
+
+    it "marks the deployment killed, logs who killed it, and notifies once" do
+      deployment.kill!(user)
+      expect(deployment.reload).to be_killed
+      expect(deployment.log_outputs.last.output).to include("Deployment was killed by #{user.email}")
+      expect(DeploymentNotifier).to have_received(:with).with(project: deployment.project, deployment: deployment).once
+    end
+  end
 end

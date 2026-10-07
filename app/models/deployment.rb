@@ -33,6 +33,13 @@ class Deployment < ApplicationRecord
     self.version = "#{project.deployments.count + 1}.0.0"
   end
 
+  # The running deploy sees `killed` and stops without notifying, so this is the only cancel notification.
+  def kill!(user)
+    killed!
+    error("Deployment was killed by #{user.email}")
+    DeploymentNotifier.with(project: project, deployment: self).deliver_later(project.users)
+  end
+
   def add_manifest(yaml)
     manifest_key = K8::Base.manifest_key(yaml)
 

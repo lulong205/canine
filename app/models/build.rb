@@ -43,6 +43,13 @@ class Build < ApplicationRecord
     broadcast_build
   end
 
+  # The running job sees `killed` and stops without notifying, so this is the only cancel notification.
+  def kill!(user)
+    killed!
+    error("Build was killed by #{user.email}")
+    BuildNotifier.with(project: project, build: self).deliver_later(project.users)
+  end
+
   def broadcast_build
     project.broadcast_status_badges
 

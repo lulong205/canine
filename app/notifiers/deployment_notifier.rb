@@ -15,6 +15,8 @@ class DeploymentNotifier < ApplicationNotifier
       commit_info ? "Deployed #{version}: #{commit_info}" : "Successfully deployed #{version}"
     when "failed"
       commit_info ? "Deploy failed for #{version}: #{commit_info}" : "Deploy failed for #{version}"
+    when "killed"
+      commit_info ? "Deploy cancelled for #{version}: #{commit_info}" : "Deploy cancelled for #{version}"
     else
       "Deployment #{deployment.status}"
     end
@@ -67,6 +69,8 @@ class DeploymentNotifier < ApplicationNotifier
   end
 
   def status_text
+    return "Cancelled" if params[:deployment].killed?
+
     case status_state
     when :success then "Deployed"
     when :in_progress then "Deploying"
@@ -75,6 +79,8 @@ class DeploymentNotifier < ApplicationNotifier
   end
 
   def status_emoji
+    return "🚫" if params[:deployment].killed?
+
     case status_state
     when :success then "✅"
     when :in_progress then "🚀"

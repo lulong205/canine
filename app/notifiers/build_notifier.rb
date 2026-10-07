@@ -65,6 +65,8 @@ class BuildNotifier < ApplicationNotifier
   end
 
   def status_text
+    return "Cancelled" if params[:build].killed?
+
     case status_state
     when :success then "Success"
     when :in_progress then "Building"
@@ -73,6 +75,8 @@ class BuildNotifier < ApplicationNotifier
   end
 
   def status_emoji
+    return "🚫" if params[:build].killed?
+
     case status_state
     when :success then "✅"
     when :in_progress then "🔨"
