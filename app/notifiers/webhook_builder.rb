@@ -40,6 +40,12 @@ class WebhookBuilder
     self
   end
 
+  # Only the generic :webhook payload carries the event name
+  def event(name)
+    @event = name
+    self
+  end
+
   def build(provider)
     case provider.to_sym
     when :slack
@@ -50,6 +56,8 @@ class WebhookBuilder
       microsoft_teams_payload
     when :google_chat
       google_chat_payload
+    when :webhook
+      webhook_payload
     else
       raise ArgumentError, "Unknown provider: #{provider}"
     end
@@ -170,6 +178,23 @@ class WebhookBuilder
           }
         }
       ]
+    }
+  end
+
+  # Provider-neutral format v1, documented for receivers. Add keys freely; bump version only for breaking changes.
+  def webhook_payload
+    {
+      version: 1,
+      event: @event,
+      status: @status_state.to_s,
+      status_text: @status_text,
+      emoji: @status_emoji,
+      title: @title,
+      message: @description,
+      url: @url,
+      url_label: @url ? @url_label : nil,
+      fields: @widgets.map { |w| { label: w[:label], value: w[:value].to_s, link: w[:link] } },
+      timestamp: Time.current.iso8601
     }
   end
 
