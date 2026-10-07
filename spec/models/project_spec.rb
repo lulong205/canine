@@ -236,5 +236,12 @@ RSpec.describe Project, type: :model do
       restored = CanineConfig::Definition.new(project.reload.to_canine_config).services.first
       expect(restored.domains.map { |d| [ d.domain_name, d.need_ssl ] }).to eq([ [ "proxied.example.com", false ] ])
     end
+
+    it "round-trips probes_yaml" do
+      probes = { "startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 } }
+      create(:service, project: project, probes_yaml: probes)
+      restored = CanineConfig::Definition.new(project.reload.to_canine_config).services.first
+      expect(restored.probes_yaml).to eq(probes)
+    end
   end
 end

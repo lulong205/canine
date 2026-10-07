@@ -11,6 +11,7 @@
 #  last_health_checked_at  :datetime
 #  name                    :string           not null
 #  pod_yaml                :jsonb
+#  probes_yaml             :jsonb
 #  replicas                :integer          default(1)
 #  service_type            :integer          not null
 #  status                  :integer          default("pending")

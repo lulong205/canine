@@ -11,6 +11,7 @@
 #  last_health_checked_at  :datetime
 #  name                    :string           not null
 #  pod_yaml                :jsonb
+#  probes_yaml             :jsonb
 #  replicas                :integer          default(1)
 #  service_type            :integer          not null
 #  status                  :integer          default("pending")
@@ -27,6 +28,8 @@
 #  fk_rails_...  (project_id => projects.id)
 #
 class Service < ApplicationRecord
+  PROBE_NAMES = %w[startupProbe livenessProbe readinessProbe].freeze
+
   belongs_to :project
   enum :service_type, {
     web_service: 0,
@@ -48,6 +51,7 @@ class Service < ApplicationRecord
 
   validates :cron_schedule, presence: true, if: :cron_job?
   validates :command, presence: true, if: :cron_job?
+  validate :probes_yaml_shape
   has_many :domains, dependent: :destroy
   validates :name, presence: true,
                    format: { with: /\A[a-z0-9-]+\z/, message: "must be lowercase, numbers, and hyphens only" },
@@ -100,7 +104,9 @@ class Service < ApplicationRecord
       :replicas,
       :description,
       :allow_public_networking,
-      :pod_yaml
+      :pod_yaml,
+      :probes_yaml,
+      probes_yaml: {}
     )
 
     # Convert YAML text to JSON if pod_yaml is a string
@@ -113,6 +119,31 @@ class Service < ApplicationRecord
       end
     end
 
+    # Probe overrides arrive as YAML text from the form, or as a map from a restored config
+    if permitted[:probes_yaml].is_a?(String)
+      text = permitted[:probes_yaml]
+      permitted[:probes_yaml] = begin
+        YAML.safe_load(text) # blank or comments only → nil (no override)
+      rescue Psych::SyntaxError
+        text # kept so validation reports it
+      end
+    end
+
     permitted
+  end
+
+  private
+
+  def probes_yaml_shape
+    return if probes_yaml.nil?
+    return errors.add(:probes_yaml, "is not valid YAML") if probes_yaml.is_a?(String)
+    return errors.add(:probes_yaml, "must be a map of #{PROBE_NAMES.join(", ")}") unless probes_yaml.is_a?(Hash)
+
+    unknown = probes_yaml.keys - PROBE_NAMES
+    return errors.add(:probes_yaml, "has unknown keys: #{unknown.join(", ")}") if unknown.any?
+
+    probes_yaml.each do |name, probe|
+      errors.add(:probes_yaml, "#{name} must be a map or null") unless probe.nil? || probe.is_a?(Hash)
+    end
   end
 end

@@ -347,7 +347,8 @@ class Project < ApplicationRecord
       "replicas" => service.replicas,
       "description" => service.description,
       "allow_public_networking" => service.allow_public_networking,
-      "pod_yaml" => service.pod_yaml
+      "pod_yaml" => service.pod_yaml,
+      "probes_yaml" => service.probes_yaml
     }.compact
 
     if service.domains.any?
