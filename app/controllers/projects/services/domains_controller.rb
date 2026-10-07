@@ -29,6 +29,6 @@ class Projects::Services::DomainsController < Projects::Services::BaseController
   private
 
   def domain_params
-    params.require(:domain).permit(:domain_name)
+    params.require(:domain).permit(:domain_name, :need_ssl)
   end
 end

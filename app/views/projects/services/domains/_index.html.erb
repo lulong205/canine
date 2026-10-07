@@ -10,12 +10,17 @@
         <div class="flex-grow">
           <%= form.text_field :domain_name, inputmode: "url", class: "input input-bordered w-full", placeholder: "Domain Name", required: true %>
         </div>
+        <label class="label cursor-pointer gap-2">
+          <%= form.check_box :need_ssl, class: "checkbox" %>
+          <span class="label-text whitespace-nowrap">Need SSL?</span>
+        </label>
         <%= form.submit "Add Domain", class: "btn btn-primary", data: { disable_with: "Loading..." } %>
       <% end %>
+      <p class="text-sm text-gray-500 mt-1">Uncheck only for domains proxied by Cloudflare with SSL mode Full.</p>
     </div>
 
     <h5 class="my-4">Make sure to configure domains with the following DNS records</h5>
-    <% if service.domains.any? %>
+    <% if service.domains.any?(&:need_ssl?) %>
       <%= render(
         "shared/partials/async_renderer",
         view_model: Async::K8::CertificateStatusViewModel.new(
