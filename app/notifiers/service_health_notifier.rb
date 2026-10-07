@@ -34,6 +34,7 @@ class ServiceHealthNotifier < ApplicationNotifier
       .description(message)
       .url(url, label: "View Service")
       .status(emoji: status_emoji, text: status_text, state: status_state)
+      .event(notification_type)
 
     builder.widget(label: "Status", value: "#{status_emoji} #{status_text}")
     builder.widget(label: "Service", value: service.name)

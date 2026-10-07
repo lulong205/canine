@@ -43,6 +43,7 @@ class DeploymentNotifier < ApplicationNotifier
       .description(message)
       .url(url, label: "View Deployment")
       .status(emoji: status_emoji, text: status_text, state: status_state)
+      .event(notification_type)
 
     builder.widget(label: "Status", value: "#{status_emoji} #{status_text}")
     builder.widget(label: "Version", value: deployment.version)

@@ -31,6 +31,7 @@ class TestNotifier
       .description(message)
       .url(url, label: url_label)
       .status(emoji: "🔔", text: "Test", state: :success)
+      .event("test")
       .widget(label: "Notifier", value: notifier.name)
       .widget(label: "Project", value: project.name)
       .build(provider_type)
