@@ -25,4 +25,13 @@ RSpec.describe Projects::ServicesController, type: :request do
       expect(service.reload.probes_yaml).to be_nil
     end
   end
+
+  describe "GET #show" do
+    it "shows the Health Probes editor for web services only" do
+      get project_service_path(project, create(:service, project: project), tab: "advanced")
+      expect(response.body).to include("Health Probes", "Save Health Probes")
+      get project_service_path(project, create(:service, :background_service, project: project), tab: "advanced")
+      expect(response.body).not_to include("Health Probes")
+    end
+  end
 end
