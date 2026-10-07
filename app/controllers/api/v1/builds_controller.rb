@@ -20,8 +20,7 @@ module Api
 
       def kill
         if @build.in_progress?
-          @build.killed!
-          @build.error("Build was killed by #{current_user.email}")
+          @build.kill!(current_user)
           render json: { message: "Build has been killed." }, status: :ok
         else
           render json: { error: "Build cannot be killed (not in progress)." }, status: :unprocessable_entity

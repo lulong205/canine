@@ -49,6 +49,8 @@ RSpec.describe Api::V1::BuildsController, :swagger, type: :request do
     let(:build) { create :build, project:, status: :in_progress }
     let(:id) { build.id }
 
+    before { allow(BuildNotifier).to receive(:with).and_call_original }
+
     patch('Kill Build') do
       tags 'Builds'
       operationId 'killBuild'
@@ -62,7 +64,10 @@ RSpec.describe Api::V1::BuildsController, :swagger, type: :request do
                  message: { type: :string, example: 'Build has been killed.' }
                },
                required: %w[message]
-        run_test!
+        run_test! do
+          expect(build.reload).to be_killed
+          expect(BuildNotifier).to have_received(:with).with(project: project, build: build).once
+        end
       end
 
       response(422, 'unprocessable entity') do
@@ -72,7 +77,9 @@ RSpec.describe Api::V1::BuildsController, :swagger, type: :request do
                  error: { type: :string, example: 'Build cannot be killed (not in progress).' }
                },
                required: %w[error]
-        run_test!
+        run_test! do
+          expect(BuildNotifier).not_to have_received(:with)
+        end
       end
     end
   end

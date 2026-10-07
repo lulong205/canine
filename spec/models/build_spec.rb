@@ -78,4 +78,18 @@ RSpec.describe Build do
       expect(build).to be_valid
     end
   end
+
+  describe "#kill!" do
+    let(:user) { create(:user) }
+    let(:build) { create(:build, status: :in_progress) }
+
+    before { allow(BuildNotifier).to receive(:with).and_call_original }
+
+    it "marks the build killed, logs who killed it, and notifies once" do
+      build.kill!(user)
+      expect(build.reload).to be_killed
+      expect(build.log_outputs.last.output).to include("Build was killed by #{user.email}")
+      expect(BuildNotifier).to have_received(:with).with(project: build.project, build: build).once
+    end
+  end
 end

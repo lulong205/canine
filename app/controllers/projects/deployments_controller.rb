@@ -40,8 +40,7 @@ class Projects::DeploymentsController < Projects::BaseController
 
   def kill
     if @build.in_progress?
-      @build.killed!
-      @build.error("Build was killed by #{current_user.email}")
+      @build.kill!(current_user)
       redirect_to project_deployment_path(@project, @build), notice: "Build has been killed."
     else
       redirect_to project_deployment_path(@project, @build), alert: "Build cannot be killed (not in progress)."
@@ -51,8 +50,7 @@ class Projects::DeploymentsController < Projects::BaseController
   def kill_deploy
     deployment = @build.deployment
     if deployment&.in_progress?
-      deployment.killed!
-      deployment.error("Deployment was killed by #{current_user.email}")
+      deployment.kill!(current_user)
       redirect_to project_deployment_path(@project, @build), notice: "Deployment has been killed."
     else
       redirect_to project_deployment_path(@project, @build), alert: "Deployment cannot be killed (not in progress)."
