@@ -87,6 +87,12 @@ RSpec.describe Service, type: :model do
     it("treats comments only as no override") { expect(permitted_probes("# nothing\n")).to be_nil }
     it("keeps unparseable text for validation") { expect(permitted_probes("livenessProbe: [")).to eq("livenessProbe: [") }
 
+    it "keeps YAML that safe_load refuses (aliases, symbols) for validation" do
+      [ "livenessProbe: &p\n  periodSeconds: 30\nreadinessProbe: *p\n", "livenessProbe: :fast\n" ].each do |text|
+        expect(permitted_probes(text)).to eq(text)
+      end
+    end
+
     it "keeps a map from a restored config" do
       expect(permitted_probes({ "startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 } }))
         .to eq("startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 })

@@ -31,13 +31,13 @@
       <p class="my-2 text-sm text-gray-300">
         Merged onto these defaults. Needs a Health Check URL. Applies on next deploy.
       </p>
+      <pre class="p-3 mb-2 bg-base-200 rounded-lg font-mono text-xs"><%= K8::Stateless::Deployment::DEFAULT_PROBES.to_yaml_raw %></pre>
 
       <%= form_with(model: @service, url: project_service_path(@service.project, @service), method: :put, data: { turbo: false }) do |form| %>
         <div class="form-control" data-controller="yaml-editor">
           <%= form.label :probes_yaml, "Health Probes YAML", class: "label" %>
           <%= form.text_area :probes_yaml,
             rows: 15,
-            placeholder: K8::Stateless::Deployment::DEFAULT_PROBES.to_yaml_raw,
             class: "textarea textarea-bordered font-mono text-sm w-full",
             data: { yaml_editor_target: "textarea" },
             value: @service.probes_yaml&.to_yaml_raw.to_s %>

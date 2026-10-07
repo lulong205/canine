@@ -124,7 +124,7 @@ class Service < ApplicationRecord
       text = permitted[:probes_yaml]
       permitted[:probes_yaml] = begin
         YAML.safe_load(text) # blank or comments only → nil (no override)
-      rescue Psych::SyntaxError
+      rescue Psych::Exception # syntax errors, aliases, disallowed classes (e.g. :symbols)
         text # kept so validation reports it
       end
     end
