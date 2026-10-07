@@ -43,6 +43,11 @@ FactoryBot.define do
       webhook_url { "https://chat.googleapis.com/v1/spaces/test/messages" }
     end
 
+    trait :webhook do
+      provider_type { :webhook }
+      webhook_url { "https://example.com/hooks/abc" }
+    end
+
     trait :email do
       provider_type { :email }
       webhook_url { nil }

@@ -49,6 +49,22 @@ RSpec.describe Notifier, type: :model do
       expect(notifier).not_to be_valid
       expect(notifier.errors[:webhook_url]).to include("must be a valid HTTPS URL")
     end
+
+    it "accepts any HTTPS URL for a webhook notifier" do
+      expect(build(:notifier, :webhook)).to be_valid
+    end
+
+    it "rejects an HTTP URL for a webhook notifier" do
+      notifier = build(:notifier, :webhook, webhook_url: "http://example.com/hooks/abc")
+      expect(notifier).not_to be_valid
+      expect(notifier.errors[:webhook_url]).to include("must be a valid HTTPS URL")
+    end
+
+    it "requires a URL for a webhook notifier" do
+      notifier = build(:notifier, :webhook, webhook_url: "")
+      expect(notifier).not_to be_valid
+      expect(notifier.errors[:webhook_url]).to include("can't be blank")
+    end
   end
 
   describe "scopes" do
