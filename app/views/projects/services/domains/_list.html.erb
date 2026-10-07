@@ -18,6 +18,7 @@
             <%= link_to "https://#{domain.domain_name}", target: "_blank" do %>
               <iconify-icon icon="lucide:external-link" class="text-xs"></iconify-icon>
             <% end %>
+            <span class="badge badge-sm <%= domain.need_ssl? ? "badge-success" : "badge-ghost" %>"><%= domain.need_ssl? ? "SSL" : "No SSL" %></span>
             <% if domain.auto_managed? %>
               <div class="tooltip tooltip-right inline-block" data-tip="Automatically managed by Canine">
                 <span class="badge badge-sm badge-info">Auto</span>

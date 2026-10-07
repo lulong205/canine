@@ -40,4 +40,15 @@ RSpec.describe Services::Update do
       end
     end
   end
+
+  describe "invalid params" do
+    it "fails with the validation message and leaves the service unchanged" do
+      service = create(:service, project: project)
+      params = ActionController::Parameters.new({ service: { probes_yaml: "livenessProbe: [" } })
+      result = described_class.execute(service: service, params: params)
+      expect(result).to be_failure
+      expect(result.message).to include("is not valid YAML")
+      expect(service.reload).to have_attributes(probes_yaml: nil, status: "pending")
+    end
+  end
 end

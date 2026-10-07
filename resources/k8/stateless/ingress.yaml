@@ -5,22 +5,28 @@ metadata:
   namespace: <%= project.namespace %>
   labels:
     caninemanaged: 'true'
+  <% if ssl_domains.any? || ingress_class_name == "nginx" %>
   annotations:
+    <% if ssl_domains.any? %>
     cert-manager.io/cluster-issuer: "letsencrypt"
+    <% end %>
     <% if ingress_class_name == "nginx" %>
     nginx.ingress.kubernetes.io/proxy-pass-headers: "*"
     <% end %>
+  <% end %>
 spec:
   ingressClassName: "<%= ingress_class_name %>"
+  <% if ssl_domains.any? %>
   tls:
   - hosts:
-    <% service.domains.each do |domain| %>
-    - <%= domain.domain_name %>
+    <% ssl_domains.each do |domain| %>
+    - <%= domain.domain_name.to_json %>
     <% end %>
     secretName: <%= certificate_name %>
+  <% end %>
   rules:
   <% service.domains.each do |domain| %>
-  - host: <%= domain.domain_name %>
+  - host: <%= domain.domain_name.to_json %>
     http:
       paths:
       - pathType: Prefix

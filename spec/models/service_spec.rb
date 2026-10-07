@@ -11,6 +11,7 @@
 #  last_health_checked_at  :datetime
 #  name                    :string           not null
 #  pod_yaml                :jsonb
+#  probes_yaml             :jsonb
 #  replicas                :integer          default(1)
 #  service_type            :integer          not null
 #  status                  :integer          default("pending")
@@ -55,6 +56,46 @@ RSpec.describe Service, type: :model do
 
       expect(Rails.logger).to have_received(:error).with(/Failed to parse pod_yaml/)
       expect(permitted[:pod_yaml]).to eq(invalid_yaml)
+    end
+  end
+
+  describe "probes_yaml validation" do
+    {
+      "livenessProbe: [" => "is not valid YAML",
+      [ "livenessProbe" ] => "must be a map of startupProbe, livenessProbe, readinessProbe",
+      { "liveness" => {}, "startup" => {} } => "has unknown keys: liveness, startup",
+      { "livenessProbe" => 5 } => "livenessProbe must be a map or null"
+    }.each do |value, message|
+      it "rejects #{value.inspect}" do
+        service = build(:service, probes_yaml: value)
+        expect(service).not_to be_valid
+        expect(service.errors[:probes_yaml]).to include(message)
+      end
+    end
+
+    it "accepts nil and a map of known probes" do
+      expect(build(:service, probes_yaml: nil)).to be_valid
+      expect(build(:service, probes_yaml: { "startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 } })).to be_valid
+    end
+  end
+
+  describe ".permitted_params probes_yaml" do
+    def permitted_probes(value) = Service.new(Service.permitted_params(ActionController::Parameters.new(service: { probes_yaml: value }))).probes_yaml
+
+    it("parses probe YAML text") { expect(permitted_probes("livenessProbe:\n  periodSeconds: 30\n")).to eq("livenessProbe" => { "periodSeconds" => 30 }) }
+    it("clears on blank text") { expect(permitted_probes("")).to be_nil }
+    it("treats comments only as no override") { expect(permitted_probes("# nothing\n")).to be_nil }
+    it("keeps unparseable text for validation") { expect(permitted_probes("livenessProbe: [")).to eq("livenessProbe: [") }
+
+    it "keeps YAML that safe_load refuses (aliases, symbols) for validation" do
+      [ "livenessProbe: &p\n  periodSeconds: 30\nreadinessProbe: *p\n", "livenessProbe: :fast\n" ].each do |text|
+        expect(permitted_probes(text)).to eq(text)
+      end
+    end
+
+    it "keeps a map from a restored config" do
+      expect(permitted_probes({ "startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 } }))
+        .to eq("startupProbe" => nil, "livenessProbe" => { "periodSeconds" => 30 })
     end
   end
 end

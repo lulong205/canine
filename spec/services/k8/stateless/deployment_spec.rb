@@ -83,4 +83,76 @@ RSpec.describe K8::Stateless::Deployment do
       end
     end
   end
+
+  describe "probes" do
+    let(:http) { { "path" => "/up", "port" => 3000 } }
+    let(:probes_yaml) { nil }
+    let(:service) { create(:service, project: project, healthcheck_url: "/up", probes_yaml: probes_yaml) }
+    let(:liveness_default) { { "httpGet" => http, "periodSeconds" => 20, "timeoutSeconds" => 10, "failureThreshold" => 3 } }
+
+    def container = YAML.safe_load(described_class.new(service).to_yaml).dig("spec", "template", "spec", "containers", 0)
+
+    it "renders the default probes" do
+      expect(container["startupProbe"]).to eq("httpGet" => http, "periodSeconds" => 5, "failureThreshold" => 60)
+      expect(container["livenessProbe"]).to eq(liveness_default)
+      expect(container["readinessProbe"]).to eq(liveness_default)
+    end
+
+    context "with an empty override" do
+      let(:probes_yaml) { {} }
+
+      it "renders the defaults" do
+        expect(container["startupProbe"]).to eq("httpGet" => http, "periodSeconds" => 5, "failureThreshold" => 60)
+        expect(container["livenessProbe"]).to eq(liveness_default)
+        expect(container["readinessProbe"]).to eq(liveness_default)
+      end
+    end
+
+    context "with a timing override" do
+      let(:probes_yaml) { { "livenessProbe" => { "periodSeconds" => 30 } } }
+
+      it "deep-merges it onto the default" do
+        expect(container["livenessProbe"]).to eq(liveness_default.merge("periodSeconds" => 30))
+      end
+    end
+
+    context "with only the httpGet path changed" do
+      let(:probes_yaml) { { "readinessProbe" => { "httpGet" => { "path" => "/ready" } } } }
+
+      it "keeps the port" do
+        expect(container.dig("readinessProbe", "httpGet")).to eq("path" => "/ready", "port" => 3000)
+      end
+    end
+
+    context "with a probe set to null" do
+      let(:probes_yaml) { { "startupProbe" => nil } }
+
+      it "removes it" do
+        expect(container).not_to have_key("startupProbe")
+        expect(container["livenessProbe"]).to eq(liveness_default)
+      end
+    end
+
+    context "with a tcpSocket handler" do
+      let(:probes_yaml) { { "livenessProbe" => { "tcpSocket" => { "port" => 3000 } } } }
+
+      it "replaces the default httpGet" do
+        expect(container["livenessProbe"]).to eq("tcpSocket" => { "port" => 3000 }, "periodSeconds" => 20, "timeoutSeconds" => 10, "failureThreshold" => 3)
+      end
+    end
+
+    it "renders no probes for a background service" do
+      service = create(:service, :background_service, project: project, healthcheck_url: "/up", probes_yaml: { "livenessProbe" => { "periodSeconds" => 30 } })
+      container = YAML.safe_load(described_class.new(service).to_yaml).dig("spec", "template", "spec", "containers", 0)
+      expect(container.keys & Service::PROBE_NAMES).to be_empty
+    end
+
+    context "without a Health Check URL" do
+      let(:service) { create(:service, project: project, healthcheck_url: nil) }
+
+      it "renders no probes" do
+        expect(container.keys & Service::PROBE_NAMES).to be_empty
+      end
+    end
+  end
 end

@@ -33,7 +33,7 @@ class Projects::ServicesController < Projects::BaseController
         format.html { redirect_to project_services_path(@project), notice: "Service will be updated on the next deploy." }
       else
         format.turbo_stream { render turbo_stream: turbo_stream.replace("service-save-feedback", html: content_tag(:span, "Failed to save", class: "text-error text-sm")) }
-        format.html { redirect_to project_services_path(@project), alert: "Service could not be updated." }
+        format.html { redirect_to project_services_path(@project), alert: "Service could not be updated: #{result.message}" }
       end
     end
   end
