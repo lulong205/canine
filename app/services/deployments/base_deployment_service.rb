@@ -74,10 +74,26 @@ class Deployments::BaseDeploymentService
   end
 
   def complete_deployment!
+    wait_for_rollouts
     @deployment.completed!
     @project.update!(current_deployment: @deployment)
     @project.deployed!
     notify_deployment
+  end
+
+  # Only report "Deployed" once every replica is ready.
+  # Fails when a rollout makes no progress for progressDeadlineSeconds (k8s default 10 min); 30m caps a stuck watch.
+  def wait_for_rollouts
+    @project.services.select { |s| s.web_service? || s.background_service? }.each do |service|
+      @logger.info("Waiting for all replicas of #{service.name} to be ready...", color: :yellow)
+      @kubectl.call(%w[-n] + [ @project.namespace, "rollout", "status", "deployment/#{service.name}", "--timeout=30m" ])
+    end
+  rescue StandardError
+    unless @deployment.reload.killed?
+      @deployment.failed!
+      notify_deployment
+    end
+    raise
   end
 
   def notify_deployment
