@@ -12,8 +12,8 @@ module Daisyui5Vars
 
   OKLCH = %r{oklch\(var\(--([a-z0-9]+)\)(?:\s*/\s*(var\(--[a-z0-9-]+\)|[0-9.]+))?\s*\)}
   REWRITTEN = /color-mix\(in oklab, var\(--color-[a-z0-9-]+\) (?:calc\(var\(--[a-z0-9-]+, 1\) \* 100%\)|[0-9.]+%), transparent\)|var\(--color-[a-z0-9-]+\)/
-  FALLBACK = /var\(--fallback-[a-z0-9]+,\s*(#{REWRITTEN})\)/
-  LEFTOVER = /oklch\(var\(--[a-z0-9]+\)|var\(--fallback-[a-z0-9]+|--rounded-[a-z]+/
+  FALLBACK = /var\(\s*--fallback-[a-z0-9]+,\s*(#{REWRITTEN})\s*\)/
+  LEFTOVER = /oklch\(var\(--[a-z0-9]+\)|--fallback-[a-z0-9]+|--rounded-[a-z]+/
 
   def self.rewrite(css)
     css = css.gsub(OKLCH) do
