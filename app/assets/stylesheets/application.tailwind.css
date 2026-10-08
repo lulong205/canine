@@ -11,6 +11,7 @@
 @import "./tables.css";
 @import "./pacman.css";
 @import "./custom.css";
+@import "./daisyui4_compat.css";
 
 /* Ruby (helpers, view models, controllers, components) emits classes too */
 @source "../../views";

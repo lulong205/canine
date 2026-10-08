@@ -1,0 +1,24 @@
+/* DaisyUI 4 classes removed in v5 that the views still use, kept with their v4 look. */
+.form-control {
+  display: flex;
+  flex-direction: column;
+}
+.label-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--color-base-content);
+}
+.label-text-alt {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: var(--color-base-content);
+}
+.card-bordered {
+  @apply card-border;
+}
+.tabs-bordered {
+  @apply tabs-border;
+}
+.tabs-boxed {
+  @apply tabs-box;
+}

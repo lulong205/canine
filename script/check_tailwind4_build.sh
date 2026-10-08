@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 yarn -s build:css >/dev/null
 css=app/assets/builds/tailwind.css
 fail=0
-for needle in '--color-primary:oklch(60.67' '.border-none' '.text-cyan-400' '.btn'; do
+for needle in '--color-primary:oklch(60.67' '.border-none' '.text-cyan-400' '.btn' '.form-control' '.label-text' '.label-text-alt' '.card-bordered' '.tabs-bordered' '.tabs-boxed'; do
   grep -qF -- "$needle" "$css" || { echo "missing: $needle"; fail=1; }
 done
 for banned in 'oklch(var(--' '--fallback-'; do
