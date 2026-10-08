@@ -1,14 +1,101 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;1000&display=swap");
+@import "tailwindcss" source(none);
 
 @import "tippy.js/dist/tippy.css";
-@import 'tippy.js/themes/light.css';
+@import "tippy.js/themes/light.css";
 @import "@xterm/xterm/css/xterm.css";
 @import "./main.css";
-@import "components/nav";
+@import "./components/nav.css";
 @import "./forms.css";
 @import "./weird_fixes.css";
 @import "./tables.css";
-@import "pacman.css";
-@import "custom.css";
+@import "./pacman.css";
+@import "./custom.css";
+
+/* Ruby (helpers, view models, controllers, components) emits classes too */
+@source "../../views";
+@source "../../javascript";
+@source "../../components";
+@source "../../helpers";
+@source "../../view_models";
+@source "../../controllers";
+@source "../../../public/*.html";
+/* LogColorsHelper builds these class names at runtime */
+@source inline("text-{gray,red,green,yellow,blue,purple,cyan}-{100,300,400,500}");
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: false;
+}
+
+/* The only theme. Values copied from the DaisyUI 4 build so pages look the same. */
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: oklch(23.2126% 0.012215 248.352522);
+  --color-base-200: oklch(28.6174% 0.015423 252.363848);
+  --color-base-300: oklch(30.6721% 0.016703 255.646526);
+  --color-base-content: oklch(93.3369% 0.025928 248.105919);
+  --color-primary: oklch(60.6757% 0.214734 258.201875);
+  --color-primary-content: oklch(100% 0 0);
+  --color-secondary: oklch(40.5398% 0 0);
+  --color-secondary-content: oklch(100% 0 0);
+  --color-accent: oklch(74.51% 0.167 183.61);
+  --color-accent-content: oklch(14.902% 0.0334 183.61);
+  --color-neutral: oklch(31.3815% 0.021108 254.139175);
+  --color-neutral-content: oklch(74.6477% 0.0216 264.435964);
+  --color-info: oklch(83.4747% 0.145258 211.677052);
+  --color-info-content: oklch(100% 0 0);
+  --color-success: oklch(73.2949% 0.193453 150.814689);
+  --color-success-content: oklch(100% 0 0);
+  --color-warning: oklch(78.1881% 0.158453 72.326774);
+  --color-warning-content: oklch(15.7082% 0.033367 73.542246);
+  --color-error: oklch(61.9242% 0.241899 11.331846);
+  --color-error-content: oklch(100% 0 0);
+
+  --radius-box: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-selector: 1.9rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  --main-content-background: #14181c;
+  --leftmenu-background: #1e2328;
+  --topbar-background: #191e23;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --font-body: "DM Sans", sans-serif;
+  --animate-fade-out: fade-out 3s ease-out forwards;
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
+
+  @keyframes fade-out {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes fade-in {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Same centring and padding scale as the Tailwind 3 config */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) { padding-inline: 2rem; }
+  @media (width >= 48rem) { padding-inline: 3rem; }
+  @media (width >= 64rem) { padding-inline: 4rem; }
+  @media (width >= 80rem) { padding-inline: 5rem; }
+  @media (width >= 96rem) { padding-inline: 6rem; }
+}

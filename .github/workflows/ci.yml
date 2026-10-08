@@ -63,7 +63,7 @@ jobs:
           RAILS_ENV: test
         run: |
           yarn build
-          bin/rails tailwindcss:build
+          yarn build:css
 
       - name: Run tests
         env:
