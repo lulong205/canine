@@ -1,24 +1,49 @@
 /* DaisyUI 4 classes removed in v5 that the views still use, kept with their v4 look. */
-.form-control {
-  display: flex;
-  flex-direction: column;
+
+/* Components layer (as in DaisyUI 4), so utilities on the same element still win,
+   e.g. FormFieldComponent's "form-control grid lg:grid-cols-4". */
+@layer components {
+  .form-control {
+    display: flex;
+    flex-direction: column;
+  }
+  .label-text {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--color-base-content);
+  }
+  .label-text-alt {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: var(--color-base-content);
+  }
+  /* v5 rounds checkboxes with --radius-selector (pill badges); v4 kept them square */
+  .checkbox {
+    --radius-selector: 0.25rem;
+  }
 }
-.label-text {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: var(--color-base-content);
+
+/* DaisyUI 5 emits its components (.btn, .label, .tabs…) in the utilities layer, so overrides of
+   them must live there too. v5's .label is an inline, nowrap field label; v4's was a padded,
+   wrapping block row. Doubled class beats DaisyUI's .label; only layout properties are set,
+   so text utilities on labels (text-sm, text-base-content/80) still apply. */
+@layer utilities {
+  .label.label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.25rem;
+    white-space: normal;
+  }
 }
-.label-text-alt {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  color: var(--color-base-content);
-}
-.card-bordered {
+
+/* Utilities, so responsive prefixes work (e.g. md:card-bordered) */
+@utility card-bordered {
   @apply card-border;
 }
-.tabs-bordered {
+@utility tabs-bordered {
   @apply tabs-border;
 }
-.tabs-boxed {
+@utility tabs-boxed {
   @apply tabs-box;
 }
