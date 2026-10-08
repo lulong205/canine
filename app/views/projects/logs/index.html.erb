@@ -1,7 +1,8 @@
 <%= content_for :title, "Logs" %>
 
 <%= project_layout(@project) do %>
-  <%= form_with url: project_logs_path(@project), method: :get, data: { turbo_frame: "logs", turbo_action: "advance" }, class: "flex flex-wrap items-end gap-2 mb-4" do |form| %>
+  <%# A full page visit (not frame-targeted), so the frame is re-rendered with the new Auto-refresh setting %>
+  <%= form_with url: project_logs_path(@project), method: :get, class: "flex flex-wrap items-end gap-2 mb-4" do |form| %>
     <%= form.select :service, [ [ "All services", "" ] ] + @services, { selected: @service }, class: "select select-bordered select-sm" %>
     <%= form.search_field :q, value: @q, placeholder: "Search", maxlength: 200, class: "input input-bordered input-sm w-64" %>
     <%= form.select :range, K8::VictoriaLogs::RANGES, { selected: @range }, class: "select select-bordered select-sm" %>

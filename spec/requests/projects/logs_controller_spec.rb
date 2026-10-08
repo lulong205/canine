@@ -62,6 +62,13 @@ RSpec.describe Projects::LogsController, type: :request do
     expect(Capybara.string(response.body).find("turbo-frame#logs")["data-controller"]).to be_nil
   end
 
+  it "submits filters as a full page visit so the Auto-refresh setting takes effect" do
+    allow_any_instance_of(K8::VictoriaLogs).to receive(:search).and_return([])
+    get project_logs_path(project)
+    form = Capybara.string(response.body).find("form[action='#{project_logs_path(project)}']")
+    expect(form["data-turbo-frame"]).to be_nil
+  end
+
   it "puts the Logs tab right after Metrics" do
     allow_any_instance_of(K8::VictoriaLogs).to receive(:search).and_return([])
     get project_logs_path(project)

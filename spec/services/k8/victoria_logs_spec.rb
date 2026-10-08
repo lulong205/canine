@@ -63,7 +63,7 @@ RSpec.describe K8::VictoriaLogs do
       endpoint = described_class::Endpoint.new(namespace: "logging", name: "vls-server", port: 9428)
       query = described_class.build_query(namespace: "shop", service: "web", range: "6h")
       path = "/api/v1/namespaces/logging/services/vls-server:9428/proxy/select/logsql/query?" + URI.encode_www_form(query: query, limit: 500)
-      allow(kubectl).to receive(:call).with([ "get", "--raw", path ]).and_return(%({"_msg":"hi","kubernetes.pod_name":"web-1"}\n))
+      allow(kubectl).to receive(:call).with([ "get", "--raw", path, "--request-timeout=30s" ]).and_return(%({"_msg":"hi","kubernetes.pod_name":"web-1"}\n))
       rows = described_class.new(kubectl, endpoint).search(namespace: "shop", service: "web", range: "6h")
       expect(rows.map { |r| r[:message] }).to eq([ "hi" ])
     end

@@ -28,7 +28,8 @@ class K8::VictoriaLogs
     query = self.class.build_query(namespace:, service:, text:, range:)
     path = "/api/v1/namespaces/#{@endpoint.namespace}/services/#{@endpoint.name}:#{@endpoint.port}/proxy/select/logsql/query?" +
       URI.encode_www_form(query: query, limit: LIMIT)
-    self.class.parse(@kubectl.call([ "get", "--raw", path ]))
+    # The timeout keeps a slow search from tying up a web thread while auto-refresh keeps asking.
+    self.class.parse(@kubectl.call([ "get", "--raw", path, "--request-timeout=30s" ]))
   end
 
   # The namespace filter is always added here, and user text is only ever a quoted phrase,
