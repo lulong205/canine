@@ -138,4 +138,9 @@ RSpec.describe K8::Stateless::CronJob do
       end
     end
   end
+
+  it "labels job pods with the service name" do
+    manifest = YAML.safe_load(described_class.new(service).to_yaml)
+    expect(manifest.dig("spec", "jobTemplate", "spec", "template", "metadata", "labels")).to eq("app" => service.name)
+  end
 end

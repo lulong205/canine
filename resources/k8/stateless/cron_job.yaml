@@ -14,6 +14,9 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            app: <%= service.name %>
         spec:
       <% if service.pod_yaml.present? %>
 <%= service.pod_yaml.to_yaml_raw.to_s.lines.map { |line| "          #{line}" }.join %>
