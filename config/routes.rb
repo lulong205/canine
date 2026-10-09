@@ -200,6 +200,7 @@ Rails.application.routes.draw do
       end
     end
     resources :metrics, only: [ :index ], module: :projects
+    resources :logs, only: [ :index ], module: :projects
     resources :project_add_ons, only: %i[create destroy], module: :projects
     resources :environment_variables, only: %i[index show create destroy], module: :projects do
       collection do
