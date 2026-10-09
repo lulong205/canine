@@ -76,6 +76,10 @@
   --text-xs: 11px;
   --text-sm: 13px;
   --text-base: 15px;
+  /* Bare sizes, as in the Tailwind 3 config: text inherits the parent's line-height */
+  --text-xs--line-height: initial;
+  --text-sm--line-height: initial;
+  --text-base--line-height: initial;
   --font-body: "DM Sans", sans-serif;
   --animate-fade-out: fade-out 3s ease-out forwards;
   --animate-fade-in: fade-in 0.3s ease-out forwards;

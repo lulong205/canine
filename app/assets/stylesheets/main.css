@@ -1,8 +1,11 @@
 :root {
   --body-font-family: "DM Sans", sans-serif;
 }
-body {
-  font-family: var(--body-font-family), serif;
+/* Base layer, so a font utility on <body> still wins (homepage layout uses font-sans) */
+@layer base {
+  body {
+    font-family: var(--body-font-family), serif;
+  }
 }
 .animate-bounce-2 {
   animation: bounce-2 2s infinite alternate;
