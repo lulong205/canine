@@ -59,4 +59,11 @@ RSpec.describe ClusterPackage, type: :model do
     pkg = build(:cluster_package, name: "unknown-package")
     expect { pkg.installer }.to raise_error(RuntimeError, /No installer registered for package: unknown-package/)
   end
+
+  it "registers VictoriaLogs as a default, configurable package" do
+    expect(build(:cluster_package, name: "victoria-logs").installer).to be_a(ClusterPackage::Installer::VictoriaLogs)
+    expect(ClusterPackage.default_package_names).to include("victoria-logs")
+    expect(build(:cluster_package, name: "victoria-logs").configurable?).to be true
+    expect(ClusterPackage.permitted_config_keys("victoria-logs")).to eq(%w[retention_days max_disk_gib])
+  end
 end

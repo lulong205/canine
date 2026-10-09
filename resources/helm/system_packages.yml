@@ -90,6 +90,31 @@ packages:
     manifest_path: resources/k8/shared/metrics_server.yaml
     check_command: get deployment metrics-server
 
+  - name: victoria-logs
+    display_name: VictoriaLogs
+    description: Collects every pod's logs and keeps them searchable (powers the project Logs tab)
+    icon: simple-icons:victoriametrics
+    default: true
+    recommended: true
+    install_type: helm
+    repo_name: vm
+    repo_url: https://victoriametrics.github.io/helm-charts
+    chart_name: victoria-logs-single
+    chart_url: vm/victoria-logs-single
+    chart_version: 0.13.10
+    check_command: get statefulset victoria-logs
+    template:
+      - name: Retention (days)
+        key: retention_days
+        type: integer
+        required: true
+        default: 60
+      - name: Max disk (GiB)
+        key: max_disk_gib
+        type: integer
+        required: true
+        default: 20
+
   - name: telepresence
     display_name: Telepresence
     description: Local development against a remote Kubernetes cluster
