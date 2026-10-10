@@ -68,6 +68,10 @@ RSpec.describe "Look C styles", type: :system do
       expect(css("#lc-badge-spinner", "content", "::before")).to eq("none")
     end
 
+    it "draws the line under the top bar in the border colour" do
+      expect(css(".topbar-wrapper", "borderBottomColor")).to eq("rgb(31, 41, 55)") # main.css over the nav's border-base-200
+    end
+
     it "raises cards" do
       expect(css("#lc .card", "boxShadow")).to include("24px")
     end

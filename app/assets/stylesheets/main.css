@@ -92,6 +92,7 @@ input:-webkit-autofill:active {
   position: sticky;
   top: 0;
   backdrop-filter: blur(8px);
+  border-color: var(--lc-border);
 }
 .main-wrapper {
   width: 100%;
