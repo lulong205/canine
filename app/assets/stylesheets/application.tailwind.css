@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
 @import "tailwindcss" source(none);
 
 @import "tippy.js/dist/tippy.css";
@@ -12,6 +12,7 @@
 @import "./pacman.css";
 @import "./custom.css";
 @import "./daisyui4_compat.css";
+@import "./lookc.css";
 
 /* Ruby (helpers, view models, controllers, components) emits classes too */
 @source "../../views";
@@ -30,44 +31,52 @@
   themes: false;
 }
 
-/* The only theme. Values copied from the DaisyUI 4 build so pages look the same. */
+/* The only theme. Look C: dark navy surfaces, blue primary, violet accent. */
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
   prefersdark: true;
   color-scheme: dark;
 
-  --color-base-100: oklch(23.2126% 0.012215 248.352522);
-  --color-base-200: oklch(28.6174% 0.015423 252.363848);
-  --color-base-300: oklch(30.6721% 0.016703 255.646526);
-  --color-base-content: oklch(93.3369% 0.025928 248.105919);
-  --color-primary: oklch(60.6757% 0.214734 258.201875);
-  --color-primary-content: oklch(100% 0 0);
-  --color-secondary: oklch(40.5398% 0 0);
-  --color-secondary-content: oklch(100% 0 0);
-  --color-accent: oklch(74.51% 0.167 183.61);
-  --color-accent-content: oklch(14.902% 0.0334 183.61);
-  --color-neutral: oklch(31.3815% 0.021108 254.139175);
-  --color-neutral-content: oklch(74.6477% 0.0216 264.435964);
-  --color-info: oklch(83.4747% 0.145258 211.677052);
-  --color-info-content: oklch(100% 0 0);
-  --color-success: oklch(73.2949% 0.193453 150.814689);
-  --color-success-content: oklch(100% 0 0);
-  --color-warning: oklch(78.1881% 0.158453 72.326774);
-  --color-warning-content: oklch(15.7082% 0.033367 73.542246);
-  --color-error: oklch(61.9242% 0.241899 11.331846);
-  --color-error-content: oklch(100% 0 0);
+  --color-base-100: #131a26;
+  --color-base-200: #182131;
+  --color-base-300: #1d2738;
+  --color-base-content: #e6edf7;
+  --color-primary: #3b82f6;
+  --color-primary-content: #fff;
+  --color-secondary: #334155;
+  --color-secondary-content: #e6edf7;
+  --color-accent: #8b5cf6;
+  --color-accent-content: #fff;
+  --color-neutral: #1e293b;
+  --color-neutral-content: #cbd5e1;
+  --color-info: #60a5fa;
+  --color-info-content: #0b1220;
+  --color-success: #34d399;
+  --color-success-content: #04261a;
+  --color-warning: #fbbf24;
+  --color-warning-content: #231600;
+  --color-error: #fb7185;
+  --color-error-content: #2a0710;
 
-  --radius-box: 0.25rem;
-  --radius-field: 0.25rem;
-  --radius-selector: 1.9rem;
+  --radius-box: 0.75rem;
+  --radius-field: 0.625rem;
+  --radius-selector: 1rem;
   --border: 1px;
   --depth: 0;
   --noise: 0;
 
-  --main-content-background: #14181c;
-  --leftmenu-background: #1e2328;
-  --topbar-background: #191e23;
+  --lc-page: #0b0f17;
+  --lc-side: #0e131d;
+  --lc-border: #1f2937;
+  --lc-border-strong: #2a3648;
+  --lc-muted: #8b98ad;
+  --lc-accent-line: #60a5fa;
+  --lc-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+
+  --main-content-background: var(--lc-page);
+  --leftmenu-background: var(--lc-side);
+  --topbar-background: #0b0f17d9;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -80,7 +89,8 @@
   --text-xs--line-height: initial;
   --text-sm--line-height: initial;
   --text-base--line-height: initial;
-  --font-body: "DM Sans", sans-serif;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --animate-fade-out: fade-out 3s ease-out forwards;
   --animate-fade-in: fade-in 0.3s ease-out forwards;
 
