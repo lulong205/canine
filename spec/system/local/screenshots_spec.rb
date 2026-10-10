@@ -2,6 +2,7 @@ require "rails_helper"
 
 # Local-only visual parity harness (CI excludes spec/system/local).
 # Usage: SCREENSHOTS=before bundle exec rspec spec/system/aa_warmup_spec.rb spec/system/local/screenshots_spec.rb
+#        SCREENSHOTS=after-1920 WIDTH=1920 ... (WIDTH defaults to 1440; height is 1080 from 1920 up, else 900)
 RSpec.describe "Screenshots", type: :system do
   before { skip "set SCREENSHOTS=<label> to capture" unless ENV["SCREENSHOTS"] }
 
@@ -42,7 +43,8 @@ RSpec.describe "Screenshots", type: :system do
       { time: Time.utc(2026, 10, 8, 3, 0, 0), pod: "worker-5c6b-x1y2z", service: "worker", message: "processed 12 jobs" }
     ])
 
-    page.driver.resize(1440, 900)
+    width = ENV.fetch("WIDTH", 1440).to_i
+    page.driver.resize(width, width >= 1920 ? 1080 : 900)
     visit new_user_session_path
     shot("01-sign-in")
     sign_in_user(user: user, account: account)
