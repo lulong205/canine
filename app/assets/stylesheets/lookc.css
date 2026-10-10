@@ -34,7 +34,8 @@
 
   /* Deploy split button (button_to wraps Deploy in a form): one gradient and shadow on the .join, clear
      buttons inside it, a thin divider before the arrow. DaisyUI's join variables already round only the
-     buttons' outer ends. */
+     buttons' outer ends. Hover lightens the hovered half (a filter on the .join would trap the dropdown
+     menu in a stacking context). */
   .join:has(> form .btn-primary) {
     border-radius: var(--radius-field);
     background-image: var(--lc-gradient);
@@ -43,6 +44,9 @@
       background: none;
       box-shadow: none;
     }
+    & .btn-primary:hover {
+      background-color: #ffffff1a;
+    }
     & > .dropdown:last-child > .btn {
       border-inline-start: 1px solid #ffffff40;
       padding-inline: 12px;
@@ -50,10 +54,13 @@
   }
 
   /* Neutral buttons (no colour, ghost or link class; plain btn-outline included): raised, border-strong border.
-     DaisyUI's .btn:hover loses to the --btn-bg set here, so its hover step (7% darker) is restated. */
-  .btn.btn:not(.btn-primary, .btn-secondary, .btn-accent, .btn-neutral, .btn-info, .btn-success, .btn-warning, .btn-error, .btn-ghost, .btn-link) {
+     DaisyUI's .btn:hover loses to the --btn-bg set here, so its hover step (7% darker) is restated.
+     Disabled ones keep DaisyUI's look (no border). border-color restates DaisyUI's own declaration so the
+     variable also beats a view's border-* utility (the top bar search button). */
+  .btn.btn:not(.btn-primary, .btn-secondary, .btn-accent, .btn-neutral, .btn-info, .btn-success, .btn-warning, .btn-error, .btn-ghost, .btn-link, :disabled, [disabled], .btn-disabled) {
     --btn-bg: var(--color-base-200);
     --btn-border: var(--lc-border-strong);
+    border-color: var(--btn-border);
     &:hover {
       --btn-bg: color-mix(in oklab, var(--color-base-200), #000 7%);
     }
@@ -98,7 +105,8 @@
   }
 
   /* Tables: small muted header, border-colour row lines, faint row hover, 14px cell padding.
-     14px text is DaisyUI's default; table-xs (logs) keeps its compact cells. */
+     14px text is DaisyUI's default; table-xs (logs) keeps its compact cells, and the padding is a
+     :where() default so a cell's own py-* utility wins. */
   .table {
     & thead th {
       font-weight: 500;
@@ -114,20 +122,22 @@
     & tbody tr:hover {
       background-color: #ffffff06;
     }
-    &:not(.table-xs) td {
-      padding-block: 14px;
-    }
+  }
+  :where(.table:not(.table-xs) td) {
+    padding-block: 14px;
   }
 
   /* Status badges: 12px, weight 500, 10px side padding (the pill comes from --radius-selector);
-     state badges get a 6px dot in their text colour. custom.css keeps their soft backgrounds. */
+     state badges get a 6px dot in their text colour, unless an icon or spinner leads them (cluster
+     packages); a trailing animate-spin icon (Building…) keeps the dot. custom.css keeps their soft
+     backgrounds. */
   .badge {
     padding-inline: 10px;
     gap: 6px;
     font-size: 12px;
     font-weight: 500;
   }
-  :is(.badge-success, .badge-error, .badge-warning, .badge-info)::before {
+  :is(.badge-success, .badge-error, .badge-warning, .badge-info):not(:has(> iconify-icon:not(.animate-spin), > .loading))::before {
     content: "";
     width: 6px;
     height: 6px;

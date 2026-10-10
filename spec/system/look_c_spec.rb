@@ -21,12 +21,19 @@ RSpec.describe "Look C styles", type: :system do
         <input class="input bg-base-200">
         <input class="input" id="lc-disabled" disabled>
         <div class="card">Card</div>
+        <button class="btn btn-outline btn-disabled" disabled>Disabled neutral</button>
+        <button class="btn btn-outline border-base-content/20" id="lc-own-border">Search</button>
+        <table class="table"><tbody><tr><td class="py-4">Padded</td><td id="lc-td">Plain</td></tr></tbody></table>
+        <span class="badge badge-success" id="lc-badge">Deployed</span>
+        <span class="badge badge-success" id="lc-badge-icon"><iconify-icon icon="lucide:check-circle" height="14"></iconify-icon> Installed</span>
+        <span class="badge badge-info" id="lc-badge-spinner"><span class="loading loading-spinner loading-xs"></span> Installing</span>
+        <span class="badge badge-warning" id="lc-badge-busy">Building <iconify-icon class="ml-1 animate-spin" icon="lucide:loader-circle"></iconify-icon></span>
       </div>
     HTML
   end
 
-  def css(selector, prop)
-    page.evaluate_script("getComputedStyle(document.querySelector(#{selector.to_json})).#{prop}")
+  def css(selector, prop, pseudo = nil)
+    page.evaluate_script("getComputedStyle(document.querySelector(#{selector.to_json}), #{pseudo.to_json}).#{prop}")
   end
 
   before do
@@ -49,12 +56,25 @@ RSpec.describe "Look C styles", type: :system do
       expect(css(".join form .btn-primary", "backgroundImage")).not_to include("gradient")
     end
 
+    it "lightens the hovered half of the Deploy split button" do
+      find(".join form .btn-primary").hover
+      expect(find(".join form .btn-primary")).to match_style("background-color" => "rgba(255, 255, 255, 0.1)")
+    end
+
+    it "puts a dot on state badges, unless an icon or spinner leads them" do
+      expect(css("#lc-badge", "content", "::before")).to eq('""')
+      expect(css("#lc-badge-busy", "content", "::before")).to eq('""') # trailing spinner: projects/_status.html.erb
+      expect(css("#lc-badge-icon", "content", "::before")).to eq("none") # clusters/cluster_packages/_status.html.erb
+      expect(css("#lc-badge-spinner", "content", "::before")).to eq("none")
+    end
+
     it "raises cards" do
       expect(css("#lc .card", "boxShadow")).to include("24px")
     end
 
     it "gives plain outline buttons the neutral look" do
       expect(css("#lc .btn-outline:not(.btn-primary)", "borderTopColor")).to eq("rgb(42, 54, 72)")
+      expect(css("#lc-own-border", "borderTopColor")).to eq("rgb(42, 54, 72)") # shared/_search.html.erb sets its own border colour
     end
   end
 
@@ -66,6 +86,15 @@ RSpec.describe "Look C styles", type: :system do
 
     it "keeps outline primary outlined" do
       expect(css("#lc .btn-outline.btn-primary", "backgroundImage")).not_to include("gradient")
+    end
+
+    it "keeps disabled neutral buttons borderless" do
+      expect(css("#lc .btn-outline.btn-disabled", "borderTopColor")).to eq("rgba(0, 0, 0, 0)") # processes/_pods.html.erb: disabled Shell
+    end
+
+    it "keeps a table cell's own padding" do
+      expect(css("#lc td.py-4", "paddingTop")).to eq("16px") # add_ons/_index.html.erb
+      expect(css("#lc-td", "paddingTop")).to eq("14px")
     end
 
     it "keeps ghost clear" do
