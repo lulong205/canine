@@ -7,7 +7,7 @@
         url: project_service_domains_path(service.project, service),
         class: "flex gap-2 lg:max-w-xl"
       ) do |form| %>
-        <div class="flex-grow">
+        <div class="grow">
           <%= form.text_field :domain_name, inputmode: "url", class: "input input-bordered w-full", placeholder: "Domain Name", required: true %>
         </div>
         <label class="label cursor-pointer gap-2">

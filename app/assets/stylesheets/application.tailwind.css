@@ -1,14 +1,116 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap");
+@import "tailwindcss" source(none);
 
 @import "tippy.js/dist/tippy.css";
-@import 'tippy.js/themes/light.css';
+@import "tippy.js/themes/light.css";
 @import "@xterm/xterm/css/xterm.css";
 @import "./main.css";
-@import "components/nav";
+@import "./components/nav.css";
 @import "./forms.css";
 @import "./weird_fixes.css";
 @import "./tables.css";
-@import "pacman.css";
-@import "custom.css";
+@import "./pacman.css";
+@import "./custom.css";
+@import "./daisyui4_compat.css";
+@import "./lookc.css";
+
+/* Ruby (helpers, view models, controllers, components) emits classes too */
+@source "../../views";
+@source "../../javascript";
+@source "../../components";
+@source "../../helpers";
+@source "../../view_models";
+@source "../../controllers";
+@source "../../../public/*.html";
+/* LogColorsHelper builds these class names at runtime */
+@source inline("text-{gray,red,green,yellow,blue,purple,cyan}-{100,300,400,500}");
+
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+  themes: false;
+}
+
+/* The only theme. Look C: dark navy surfaces, blue primary, violet accent. */
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: #131a26;
+  --color-base-200: #182131;
+  --color-base-300: #1d2738;
+  --color-base-content: #e6edf7;
+  --color-primary: #3b82f6;
+  --color-primary-content: #fff;
+  --color-secondary: #334155;
+  --color-secondary-content: #e6edf7;
+  --color-accent: #8b5cf6;
+  --color-accent-content: #fff;
+  --color-neutral: #1e293b;
+  --color-neutral-content: #cbd5e1;
+  --color-info: #60a5fa;
+  --color-info-content: #0b1220;
+  --color-success: #34d399;
+  --color-success-content: #04261a;
+  --color-warning: #fbbf24;
+  --color-warning-content: #231600;
+  --color-error: #fb7185;
+  --color-error-content: #2a0710;
+
+  --radius-box: 0.75rem;
+  --radius-field: 0.625rem;
+  --radius-selector: 1rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  --lc-page: #0b0f17;
+  --lc-side: #0e131d;
+  --lc-border: #1f2937;
+  --lc-border-strong: #2a3648;
+  --lc-muted: #8b98ad;
+  --lc-accent-line: #60a5fa;
+  --lc-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+
+  --main-content-background: var(--lc-page);
+  --leftmenu-background: var(--lc-side);
+  --topbar-background: #0b0f17d9;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  /* Bare sizes, as in the Tailwind 3 config: text inherits the parent's line-height */
+  --text-xs--line-height: initial;
+  --text-sm--line-height: initial;
+  --text-base--line-height: initial;
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+  --animate-fade-out: fade-out 3s ease-out forwards;
+  --animate-fade-in: fade-in 0.3s ease-out forwards;
+
+  @keyframes fade-out {
+    0%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes fade-in {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Same centring and padding scale as the Tailwind 3 config */
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (width >= 40rem) { padding-inline: 2rem; }
+  @media (width >= 48rem) { padding-inline: 3rem; }
+  @media (width >= 64rem) { padding-inline: 4rem; }
+  @media (width >= 80rem) { padding-inline: 5rem; }
+  @media (width >= 96rem) { padding-inline: 6rem; }
+}

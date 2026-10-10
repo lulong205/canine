@@ -21,7 +21,7 @@
 .dropdown-menu {
   min-width: 100%;
 
-  @screen lg {
+  @media (width >= theme(--breakpoint-lg)) {
     min-width: 200px;
   }
 }

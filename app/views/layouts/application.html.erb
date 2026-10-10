@@ -11,11 +11,11 @@
         <%= render 'layouts/sidebar' %>
         <div class="leftbar-backdrop"></div>
         <main class="main-wrapper overflow-x-hidden overflow-y-auto">
-          <div class="flex h-full flex-col">
+          <div class="flex min-h-full flex-col">
             <%= render 'shared/navbar' %>
             <%= render 'shared/notices' %>
 
-            <div class="content-wrapper container">
+            <div class="content-wrapper">
               <%= yield %>
             </div>
           </div>

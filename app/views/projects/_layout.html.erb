@@ -68,7 +68,7 @@
           </li>
         </ul>
       </div>
-      <%= button_to restart_project_url(project), class: "btn btn-ghost m-1", data: { turbo: false, disable_with: "Loading..." } do %>
+      <%= button_to restart_project_url(project), class: "btn btn-outline btn-error m-1", data: { turbo: false, disable_with: "Loading..." } do %>
         Restart
       <% end %>
       <% if project.deployable? %>
