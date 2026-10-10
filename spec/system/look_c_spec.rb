@@ -121,6 +121,20 @@ RSpec.describe "Look C styles", type: :system do
       expect(css("form[action$='/restart'] .btn", "backgroundColor")).to eq("rgba(0, 0, 0, 0)")
     end
 
+    it "wraps the provider cards instead of clipping them" do
+      page.driver.resize(1200, 900) # six cards cannot share one row here, even before their logos load
+      visit new_project_notifier_path(project)
+      overflow = page.evaluate_script(<<~JS)
+        (() => {
+          const row = document.querySelector('[data-controller="radio-selector"] > .flex'); // as wide as the content area
+          return row.lastElementChild.getBoundingClientRect().right - row.getBoundingClientRect().right;
+        })()
+      JS
+      expect(overflow).to be < 1
+    ensure
+      page.driver.resize(1920, 1080)
+    end
+
     it "fills the width" do
       expect(page.evaluate_script("document.querySelector('.content-wrapper').getBoundingClientRect().width")).to be > 1600 # 1536 with the container cap
       expect(css(".content-wrapper", "paddingLeft")).to eq("32px")
