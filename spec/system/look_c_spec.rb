@@ -18,6 +18,8 @@ RSpec.describe "Look C styles", type: :system do
         <input class="input error">
         <input class="input input-error">
         <input class="input" id="lc-plain">
+        <input class="input bg-base-200">
+        <input class="input" id="lc-disabled" disabled>
         <div class="card">Card</div>
       </div>
     HTML
@@ -78,6 +80,11 @@ RSpec.describe "Look C styles", type: :system do
     it "keeps the input focus ring" do
       page.execute_script("document.getElementById('lc-plain').focus()")
       expect(css("#lc-plain", "outlineColor")).to eq("rgb(230, 237, 247)")
+    end
+
+    it "keeps an input's own background" do
+      expect(css("#lc .input.bg-base-200", "backgroundColor")).to eq("rgb(24, 33, 49)") # registry_selector_controller.js locks the URL field with it
+      expect(css("#lc-disabled", "backgroundColor")).to eq("rgb(24, 33, 49)") # DaisyUI's disabled fill
     end
 
     it "keeps Restart red outline" do

@@ -60,13 +60,14 @@
   }
 
   /* Inputs, selects, textareas: side background, border-strong border. 10px corners come from --radius-field.
+     The background is a :where() default: a view's bg-* utility and DaisyUI's disabled fill still show.
      The border goes through --input-color, so .input.error/.success (custom.css) still win; focus and
      DaisyUI's own input-error/input-success keep DaisyUI's colour. */
-  .input.input, .select.select, .textarea.textarea {
+  :where(.input, .select, .textarea):where(:not(:disabled, [disabled])) {
     background-color: var(--lc-side);
-    &:not(:focus, :focus-within, .input-error, .input-success) {
-      --input-color: var(--lc-border-strong);
-    }
+  }
+  :is(.input.input, .select.select, .textarea.textarea):not(:focus, :focus-within, .input-error, .input-success) {
+    --input-color: var(--lc-border-strong);
   }
 
   /* Tabs (tabs-bordered is the compat alias of tabs-border): full-width baseline, muted 42px tabs,
