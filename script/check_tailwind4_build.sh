@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 yarn -s build:css >/dev/null
 css=app/assets/builds/tailwind.css
 fail=0
-for needle in '--color-primary:#3b82f6' 'family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500' '.border-none' '.text-cyan-400' '.btn' '.form-control' '.label-text' '.label-text-alt' '.card-bordered' '.tabs-bordered' '.tabs-boxed'; do
+for needle in '--color-primary:#3b82f6' 'family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500' '--lc-gradient:linear-gradient(135deg, #3b82f6, #8b5cf6)' 'background-image:var(--lc-gradient)' '0 8px 24px' '.border-none' '.text-cyan-400' '.btn' '.form-control' '.label-text' '.label-text-alt' '.card-bordered' '.tabs-bordered' '.tabs-boxed'; do
   grep -qF -- "$needle" "$css" || { echo "missing: $needle"; fail=1; }
 done
 # The Tailwind 3 config set text-xs/sm/base as bare sizes, so they inherited the parent's line-height
