@@ -72,6 +72,29 @@ RSpec.describe "Look C styles", type: :system do
       expect(css(".topbar-wrapper", "borderBottomColor")).to eq("rgb(31, 41, 55)") # main.css over the nav's border-base-200
     end
 
+    it "keeps the top bar at the top of a long page" do
+      page.execute_script(<<~JS)
+        document.querySelector(".content-wrapper").insertAdjacentHTML("beforeend", '<div style="height: 4000px"></div>');
+        document.querySelector("main").scrollTop = 3000;
+      JS
+      expect(page.evaluate_script("document.querySelector('.topbar-wrapper').getBoundingClientRect().top")).to eq(0)
+    end
+
+    it "keeps the top bar above content that scrolls under it" do
+      visit new_project_notifier_path(project)
+      bar_on_top = page.evaluate_script(<<~JS)
+        (() => {
+          document.querySelector(".content-wrapper").insertAdjacentHTML("beforeend", '<div style="height: 2000px"></div>'); // room to scroll
+          const label = document.querySelector('[data-controller="radio-selector"] h4');
+          label.closest("span").style.pointerEvents = "auto"; // the card's z-10 span ignores the pointer: let the hit test see it
+          document.querySelector("main").scrollTop = label.getBoundingClientRect().top - 20; // the label now sits inside the 60px bar
+          const box = label.getBoundingClientRect();
+          return document.elementFromPoint(box.left + 5, box.top + box.height / 2).closest(".topbar-wrapper") !== null;
+        })()
+      JS
+      expect(bar_on_top).to be(true)
+    end
+
     it "raises cards" do
       expect(css("#lc .card", "boxShadow")).to include("24px")
     end
