@@ -139,6 +139,7 @@ RSpec.describe "Look C styles", type: :system do
     end
 
     it "keeps an input's own background" do
+      expect(css("#lc-plain", "backgroundColor")).to eq("rgb(14, 19, 29)") # a plain input gets the side background
       expect(css("#lc .input.bg-base-200", "backgroundColor")).to eq("rgb(24, 33, 49)") # registry_selector_controller.js locks the URL field with it
       expect(css("#lc-disabled", "backgroundColor")).to eq("rgb(24, 33, 49)") # DaisyUI's disabled fill
     end
