@@ -91,55 +91,55 @@
 }
 
 .alert-success {
-  background-color: oklch(var(--su) / 0.1) !important;
-  color: oklch(var(--su)) !important;
+  background-color: color-mix(in oklab, var(--color-success) 10%, transparent) !important;
+  color: var(--color-success) !important;
   border: 0 !important;
 }
 
 .alert-error {
-  background-color: oklch(var(--er) / 0.1) !important;
-  color: oklch(var(--er)) !important;
+  background-color: color-mix(in oklab, var(--color-error) 10%, transparent) !important;
+  color: var(--color-error) !important;
   border: 0 !important;
 }
 
 .alert-warning {
-  background-color: oklch(var(--wa) / 0.1) !important;
-  color: oklch(var(--wa)) !important;
+  background-color: color-mix(in oklab, var(--color-warning) 10%, transparent) !important;
+  color: var(--color-warning) !important;
   border: 0 !important;
 }
 
 .alert-info {
-  background-color: oklch(var(--in) / 0.1) !important;
-  color: oklch(var(--in)) !important;
+  background-color: color-mix(in oklab, var(--color-info) 10%, transparent) !important;
+  color: var(--color-info) !important;
   border: 0 !important;
 }
 
 .badge-success {
-  background-color: oklch(var(--su) / 0.1) !important;
-  color: oklch(var(--su)) !important;
+  background-color: color-mix(in oklab, var(--color-success) 10%, transparent) !important;
+  color: var(--color-success) !important;
   border: 0 !important;
 }
 
 .badge-error {
-  background-color: oklch(var(--er) / 0.1) !important;
-  color: oklch(var(--er)) !important;
+  background-color: color-mix(in oklab, var(--color-error) 10%, transparent) !important;
+  color: var(--color-error) !important;
   border: 0 !important;
 }
 
 .badge-warning {
-  background-color: oklch(var(--wa) / 0.1) !important;
-  color: oklch(var(--wa)) !important;
+  background-color: color-mix(in oklab, var(--color-warning) 10%, transparent) !important;
+  color: var(--color-warning) !important;
   border: 0 !important;
 }
 
 .badge-info {
-  background-color: oklch(var(--in) / 0.1) !important;
-  color: oklch(var(--in)) !important;
+  background-color: color-mix(in oklab, var(--color-info) 10%, transparent) !important;
+  color: var(--color-info) !important;
   border: 0 !important;
 }
 
 .badge-secondary {
-  background-color: oklch(var(--s) / 0.1) !important;
-  color: oklch(var(--s)) !important;
+  background-color: color-mix(in oklab, var(--color-secondary) 10%, transparent) !important;
+  color: var(--color-secondary) !important;
   border: 0 !important;
 }

@@ -1,0 +1,196 @@
+/* Look C component rules (B2). All in @layer utilities; consume the --lc-* variables from the theme block.
+   DaisyUI's component rules sit in sublayers of utilities (utilities.daisyui.l1…), so a rule here beats them
+   whatever its specificity (the doubled classes below are the daisyui4_compat.css convention, not what wins).
+   Specificity only decides against Tailwind utilities on the same element, which come earlier in this layer:
+   an equal or higher specificity here replaces the utility, :where() lets the utility win. */
+@layer utilities {
+  /* Cards: card background and 1px border unless the view sets its own (bg-base-200, border-dashed…);
+     the card shadow always. 12px corners come from --radius-box. */
+  :where(.card) {
+    background-color: var(--color-base-100);
+    border: 1px solid var(--lc-border);
+  }
+  .card {
+    box-shadow: 0 8px 24px #00000066;
+  }
+  @media (width >= 48rem) {
+    .md\:card {
+      background-color: var(--color-base-100);
+      border: 1px solid var(--lc-border);
+      box-shadow: 0 8px 24px #00000066;
+    }
+  }
+
+  /* Primary buttons: gradient, no border, primary shadow. White text comes from --color-primary-content.
+     Outline and disabled ones keep DaisyUI's look ([disabled] covers link_to …, disabled: true). */
+  .btn-primary.btn-primary:not(.btn-outline, :disabled, [disabled], .btn-disabled) {
+    background-image: var(--lc-gradient);
+    border: 0;
+    box-shadow: 0 4px 14px #3b82f655;
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+
+  /* Deploy split button (button_to wraps Deploy in a form): one gradient and shadow on the .join, clear
+     buttons inside it, a thin divider before the arrow. DaisyUI's join variables already round only the
+     buttons' outer ends. Hover lightens the hovered half (a filter on the .join would trap the dropdown
+     menu in a stacking context). */
+  .join:has(> form .btn-primary) {
+    border-radius: var(--radius-field);
+    background-image: var(--lc-gradient);
+    box-shadow: 0 4px 14px #3b82f655;
+    & .btn-primary {
+      background: none;
+      box-shadow: none;
+    }
+    & .btn-primary:hover {
+      background-color: #ffffff1a;
+    }
+    & > .dropdown:last-child > .btn {
+      border-inline-start: 1px solid #ffffff40;
+      padding-inline: 12px;
+    }
+  }
+
+  /* Neutral buttons (no colour, ghost or link class; plain btn-outline included): raised, border-strong border.
+     DaisyUI's .btn:hover loses to the --btn-bg set here, so its hover step (7% darker) is restated.
+     Disabled ones keep DaisyUI's look (no border). border-color restates DaisyUI's own declaration so the
+     variable also beats a view's border-* utility (the top bar search button). */
+  .btn.btn:not(.btn-primary, .btn-secondary, .btn-accent, .btn-neutral, .btn-info, .btn-success, .btn-warning, .btn-error, .btn-ghost, .btn-link, :disabled, [disabled], .btn-disabled) {
+    --btn-bg: var(--color-base-200);
+    --btn-border: var(--lc-border-strong);
+    border-color: var(--btn-border);
+    &:hover {
+      --btn-bg: color-mix(in oklab, var(--color-base-200), #000 7%);
+    }
+  }
+
+  /* Inputs, selects, textareas: side background, border-strong border. 10px corners come from --radius-field.
+     The background is a :where() default: a view's bg-* utility and DaisyUI's disabled fill still show.
+     The border goes through --input-color, so .input.error/.success (custom.css) still win; focus and
+     DaisyUI's own input-error/input-success keep DaisyUI's colour. */
+  :where(.input, .select, .textarea):where(:not(:disabled, [disabled])) {
+    background-color: var(--lc-side);
+  }
+  :is(.input.input, .select.select, .textarea.textarea):not(:focus, :focus-within, .input-error, .input-success) {
+    --input-color: var(--lc-border-strong);
+  }
+
+  /* Tabs (tabs-bordered is the compat alias of tabs-border): full-width baseline, muted 42px tabs,
+     2px accent underline across the active tab. 14px text is DaisyUI's default. */
+  .tabs-border, .tabs-bordered {
+    --tab-height: 42px;
+    gap: 22px;
+    border-bottom: 1px solid var(--lc-border);
+    & > .tab {
+      --tab-p: 2px;
+      font-weight: 500;
+    }
+    & > .tab:not(.tab-active, :hover) {
+      color: var(--lc-muted);
+    }
+    & > .tab:hover {
+      background-color: transparent; /* the views' hover:bg-base-content/15 */
+    }
+    & > .tab::before {
+      left: 0;
+      bottom: -1px;
+      width: 100%;
+      height: 2px;
+    }
+    & > .tab-active::before {
+      border-top: 2px solid var(--lc-accent-line);
+    }
+  }
+
+  /* Tables: small muted header, border-colour row lines, faint row hover, 14px cell padding.
+     14px text is DaisyUI's default; table-xs (logs) keeps its compact cells, and the padding is a
+     :where() default so a cell's own py-* utility wins. */
+  .table {
+    & thead th {
+      font-weight: 500;
+      letter-spacing: 0.06em;
+    }
+    & thead th, & thead th span { /* the spans carry text-sm text-base-content/80 */
+      font-size: 11px;
+      color: var(--lc-muted);
+    }
+    & :is(th, td) {
+      border-bottom-color: var(--lc-border);
+    }
+    & tbody tr:hover {
+      background-color: #ffffff06;
+    }
+  }
+  :where(.table:not(.table-xs) td) {
+    padding-block: 14px;
+  }
+
+  /* Status badges: 12px, weight 500, 10px side padding (the pill comes from --radius-selector);
+     state badges get a 6px dot in their text colour, unless an icon or spinner leads them (cluster
+     packages); a trailing animate-spin icon (Building…) keeps the dot. custom.css keeps their soft
+     backgrounds. */
+  .badge {
+    padding-inline: 10px;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  :is(.badge-success, .badge-error, .badge-warning, .badge-info):not(:has(> iconify-icon:not(.animate-spin), > .loading))::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+  }
+
+  /* Services rows, and every other raised collapse (Environment's "Add from .env file", the three SSO
+     "advanced" details): card background and border instead of the raised fill. 12px corners come from
+     --radius-box. */
+  .collapse.bg-base-200 {
+    background-color: var(--color-base-100);
+    border: 1px solid var(--lc-border);
+    &:hover {
+      border-color: var(--lc-border-strong);
+    }
+  }
+
+  /* Modals and dropdowns */
+  .modal-box, .dropdown-content {
+    border: 1px solid var(--lc-border);
+    box-shadow: 0 16px 48px #000000aa;
+  }
+
+  /* Sidebar menu: items fill the row (the active row is in main.css). 14px text is DaisyUI's default.
+     The account switcher's dropdown is a .menu too and keeps its own layout. */
+  .leftmenu-wrapper .menu:not(.dropdown-content) {
+    width: 100%;
+    padding: 4px 12px;
+    & :where(li > a, li > details > summary) {
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: var(--lc-muted);
+      font-weight: 500;
+    }
+    & :where(li > a, li > details > summary):hover {
+      background-color: var(--color-base-200);
+      color: var(--color-base-content);
+    }
+    & ul {
+      margin-inline-start: 18px;
+    }
+    & ul::before {
+      background-color: var(--lc-border);
+      opacity: 1;
+    }
+  }
+
+  /* Account switcher: 208px wide, name and chevron at opposite ends, card background */
+  .leftmenu-wrapper details.dropdown > summary.btn {
+    --btn-bg: var(--color-base-100);
+    --btn-border: var(--lc-border);
+    width: 208px;
+    justify-content: space-between;
+  }
+}

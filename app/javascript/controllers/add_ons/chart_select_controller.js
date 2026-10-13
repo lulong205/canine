@@ -8,8 +8,8 @@ export default class extends Controller {
 
   selectCard(event) {
     event.preventDefault()
-    this.cardTargets.forEach(card => card.classList.remove('ring', 'ring-primary'))
-    event.currentTarget.classList.add('ring', 'ring-primary')
+    this.cardTargets.forEach(card => card.classList.remove('ring-3', 'ring-primary'))
+    event.currentTarget.classList.add('ring-3', 'ring-primary')
 
     // Show/hide forms based on selection
     this.element.querySelectorAll('.card-form').forEach(form => form.classList.add('hidden'))
